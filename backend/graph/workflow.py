@@ -10,21 +10,28 @@ from backend.agents.hitl import hitl_node
 from backend.agents.execute import execute_node
 from backend.agents.monitor import monitor_node
 
+from backend.utils.regex_patterns import patterns
+
 def router_node(state: TripState):
+    """Dynamic Router with Regex Patterns"""
     if not state.get("messages"):
         return {"next": "luna_chat"}
     
     last_msg = state["messages"][-1].get("content", "").lower()
     
-    # Clear destination detection
-    if any(d in last_msg for d in ["bali", "goa", "paris", "maldives", "kerala"]):
+    # Dynamic Regex Matching
+    if patterns.match(last_msg, "destinations"):
         return {"next": "explorer"}
-    
-    # Planning request
-    if any(word in last_msg for word in ["plan", "itinerary", "schedule", "trip"]):
+    elif patterns.match(last_msg, "planning"):
         return {"next": "planner"}
+    elif patterns.match(last_msg, "monitoring"):
+        return {"next": "monitor"}
+    elif patterns.match(last_msg, "approval"):
+        return {"next": "execute"}
+    elif patterns.match(last_msg, "negative"):
+        return {"next": "luna_chat"}
     
-    # Default to Luna (safe fallback)
+    # Safe default
     return {"next": "luna_chat"}
 
 def build_graph():
@@ -42,6 +49,7 @@ def build_graph():
     workflow.set_entry_point("router")
     workflow.add_conditional_edges("router", lambda s: s.get("next", END))
     
+    # Return edges
     workflow.add_edge("luna_chat", "router")
     workflow.add_edge("explorer", "router")
     workflow.add_edge("planner", "hitl")
