@@ -16,12 +16,16 @@ def router_node(state: TripState):
     
     last_msg = state["messages"][-1].get("content", "").lower()
     
+    # Clear destination detection
     if any(d in last_msg for d in ["bali", "goa", "paris", "maldives", "kerala"]):
         return {"next": "explorer"}
-    elif any(word in last_msg for word in ["plan", "itinerary", "schedule"]):
+    
+    # Planning request
+    if any(word in last_msg for word in ["plan", "itinerary", "schedule", "trip"]):
         return {"next": "planner"}
-    else:
-        return {"next": "luna_chat"}
+    
+    # Default to Luna (safe fallback)
+    return {"next": "luna_chat"}
 
 def build_graph():
     workflow = StateGraph(TripState)
