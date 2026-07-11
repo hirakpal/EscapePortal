@@ -4,7 +4,7 @@ from schemas.trip import TripPreferences
 from graph.workflow import build_graph
 import random
 
-st.set_page_config(page_title="🌴 Escape Portal | WanderAI", layout="wide")
+st.set_page_config(page_title="🌴 Escape Portal ", layout="wide")
 
 # ... (keep your tropical CSS)
 
