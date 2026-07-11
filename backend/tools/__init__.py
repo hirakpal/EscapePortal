@@ -4,3 +4,4 @@ from .hotel import search_hotels_tool
 from .google_places import google_places_tool
 from .google_directions import google_directions_tool
 from .hybrid_search import hybrid_search
+from .sentiment import analyze_sentiment_tool
