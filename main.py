@@ -1,43 +1,58 @@
 import streamlit as st
 from datetime import datetime, timedelta
+from backend.graph.workflow import build_graph
 from schemas.trip import TripPreferences
-from graph.workflow import build_graph
-import random
 
-st.set_page_config(page_title="🌴 Escape Portal ", layout="wide")
+st.set_page_config(page_title="🌴 Escape Portal", layout="wide", page_icon="🧳")
 
-# ... (keep your tropical CSS)
+# Tropical CSS
+st.markdown("""
+<style>
+    .main {background: linear-gradient(135deg, #FFEDD5 0%, #A5F3FC 100%);}
+    .stChatMessage {border-radius: 12px;}
+</style>
+""", unsafe_allow_html=True)
 
 st.title("🌴 Escape Portal")
-st.markdown("### Agentic AI Travel Experience – Powered by 2026 Patterns")
+st.markdown("### Talk to Luna — Your Personal Travel Sprite")
 
-# Enhanced Chat with Multi-Agent + Memory
+# Initialize session
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "Hi! I'm Luna. Tell me your dream escape and watch the magic happen ✨"}]
+    st.session_state.messages = [{"role": "assistant", "content": "Hi! I'm Luna 🌺 Ready for your next escape?"}]
 
+# Display chat
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
 
-if prompt := st.chat_input("Where are we escaping?"):
+# User input
+if prompt := st.chat_input("Where are we going next?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.write(prompt)
     
-    # Agentic Response (simulated multi-agent)
-    with st.chat_message("assistant"):
-        st.write("Luna is consulting the team...")
-        # Trigger LangGraph multi-agent workflow
-        prefs = TripPreferences(destination=prompt[:50], start_date=datetime.now(), end_date=datetime.now()+timedelta(days=7), budget=50000)
-        graph = build_graph()
-        result = graph.invoke({"preferences": prefs})
-        
-        response = f"Team assembled! Here's a personalized escape plan for {prompt}."
-        st.write(response)
-        
-        # Show enhanced interactive cards (Agentic RAG style)
-        st.subheader("🌟 Agent-Curated Escapes")
-        # ... (your flip card code enhanced with more dynamic data)
+    # Run LangGraph with Luna Chat Node
+    graph = build_graph()
+    config = {"configurable": {"thread_id": "escape_portal"}}
+    
+    inputs = {
+        "messages": [{"role": "user", "content": prompt}],
+        "dna_profile": {}  # Will be populated by DNA node later
+    }
+    
+    result = graph.invoke(inputs, config)
+    
+    # Show Luna's response
+    if result.get("messages"):
+        assistant_msg = result["messages"][-1]["content"]
+        st.session_state.messages.append({"role": "assistant", "content": assistant_msg})
+        with st.chat_message("assistant"):
+            st.write(assistant_msg)
 
-# Sidebar + Monitoring (HITL)
-# ... 
+# Sidebar - Traveller DNA Preview
+with st.sidebar:
+    st.header("🧬 Traveller DNA")
+    st.caption("Luna is learning about you...")
+    # Will show profile once DNA node is added
 
-st.caption("Escape Portal • 2026 AI Patterns Applied • Luna is learning from you 🌺")
+st.caption("Escape Portal • Step-by-step Agentic AI • Luna is online 🌟")
