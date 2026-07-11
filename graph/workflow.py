@@ -3,27 +3,27 @@ from langgraph.checkpoint.memory import MemorySaver
 from .state import TripState
 
 def router_node(state: TripState):
-    """Simple router - we'll expand this"""
-    last_message = state["messages"][-1]["content"].lower() if state["messages"] else ""
+    """Decides next step based on last message"""
+    if not state.get("messages"):
+        return {"next": "luna_chat"}
     
-    if any(word in last_message for word in ["bali", "goa", "paris", "maldives"]):
+    last_msg = state["messages"][-1].get("content", "").lower()
+    
+    if any(d in last_msg for d in ["bali", "goa", "paris", "maldives", "kerala"]):
         return {"next": "explorer"}
-    elif "plan" in last_message or "itinerary" in last_message:
+    elif "plan" in last_msg or "itinerary" in last_msg:
         return {"next": "planner"}
     else:
         return {"next": "luna_chat"}
 
-def build_basic_graph():
+def build_graph():
     workflow = StateGraph(TripState)
     
-    # Add nodes (we'll implement them one by one)
     workflow.add_node("router", router_node)
-    # workflow.add_node("explorer", explorer_node)  # coming soon
-    # workflow.add_node("planner", planner_node)
-    # workflow.add_node("luna_chat", luna_node)
+    # More nodes will be added in next steps
     
     workflow.set_entry_point("router")
-    workflow.add_conditional_edges("router", lambda s: s["next"])
+    workflow.add_conditional_edges("router", lambda s: s.get("next", END))
     
     memory = MemorySaver()
     return workflow.compile(checkpointer=memory)
