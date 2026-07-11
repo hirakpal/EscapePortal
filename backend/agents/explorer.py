@@ -1,5 +1,6 @@
 from langchain_core.messages import HumanMessage
 from backend.utils.error_handler import safe_execute
+from backend.utils.circuit_breaker import circuit_breaker
 
 def _explorer_logic(state):
     last_msg = state["messages"][-1].get("content", "").lower()
@@ -15,4 +16,6 @@ def _explorer_logic(state):
     }
 
 def explorer_node(state):
-    return safe_execute(_explorer_logic, state, "Explorer")
+    def wrapped():
+        return _explorer_logic(state)
+    return safe_execute(circuit_breaker.call(wrapped), state, "Explorer")
