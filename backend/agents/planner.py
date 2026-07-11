@@ -3,6 +3,7 @@ from langchain_core.messages import HumanMessage
 from schemas.trip import TripItinerary, TripPreferences
 from datetime import datetime, timedelta
 from backend.utils.error_handler import safe_execute
+from backend.utils.circuit_breaker import circuit_breaker
 
 def _planner_logic(state):
     llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro", temperature=0.7)
@@ -24,4 +25,6 @@ def _planner_logic(state):
     }
 
 def planner_node(state):
-    return safe_execute(_planner_logic, state, "Planner")
+    def wrapped():
+        return _planner_logic(state)
+    return safe_execute(circuit_breaker.call(wrapped), state, "Planner")
