@@ -1,17 +1,19 @@
 from langchain_core.messages import HumanMessage
 from backend.utils.error_handler import safe_execute
+from backend.utils.circuit_breaker import circuit_breaker
 
 def _hitl_logic(state):
-    itinerary = state.get("itinerary")
-    if not itinerary:
+    if not state.get("itinerary"):
         return {
-            "messages": [HumanMessage(content="No itinerary ready yet. Tell me more details!")],
+            "messages": [HumanMessage(content="No itinerary ready yet.")],
             "next": "router"
         }
     return {
-        "messages": [HumanMessage(content=f"Proposed itinerary for {itinerary.destination} ready. Approve?")],
+        "messages": [HumanMessage(content="Proposed itinerary ready. Approve?")],
         "next": "router"
     }
 
 def hitl_node(state):
-    return safe_execute(_hitl_logic, state, "HITL")
+    def wrapped():
+        return _hitl_logic(state)
+    return safe_execute(circuit_breaker.call(wrapped), state, "HITL")
