@@ -11,7 +11,6 @@ st.markdown("""
 <style>
     .main {background: linear-gradient(135deg, #FFEDD5 0%, #A5F3FC 100%);}
     .stChatMessage {border-radius: 12px;}
-    .flip-card { perspective: 1000px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -53,7 +52,7 @@ if prompt := st.chat_input("Where are we escaping to?"):
     with st.chat_message("assistant"):
         st.write(assistant_msg)
     
-    # Luna Avatar
+    # Luna Avatar Reaction
     emotion = get_luna_emotion(result)
     st.image(f"avatars/luna_{emotion}.png", width=120, caption=f"Luna is {emotion}")
     
@@ -73,7 +72,7 @@ if prompt := st.chat_input("Where are we escaping to?"):
             if st.button("❌ Reject"):
                 st.warning("Plan rejected.")
 
-# Export
+# Export Section
 if "itinerary" in st.session_state:
     st.subheader("Export Your Escape")
     col1, col2 = st.columns(2)
