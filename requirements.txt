@@ -13,8 +13,7 @@ python-dotenv
 # UI & Frontend
 streamlit==1.38.0
 streamlit-lottie
-zlib1g-dev
-libjpeg-dev
+
 
 # Data & Schemas
 pydantic
