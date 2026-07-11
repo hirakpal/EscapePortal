@@ -1,0 +1,35 @@
+# Core AI & Orchestration
+langgraph==0.2.0
+langchain-google-genai
+langchain-core
+langchain-community
+crewai
+
+# LLM & Tools
+google-generativeai
+requests
+python-dotenv
+
+# UI & Frontend
+streamlit==1.38.0
+streamlit-lottie
+
+# Data & Schemas
+pydantic
+fpdf2
+
+# Vector Store & Embeddings (Hybrid Search)
+chromadb
+sentence-transformers
+
+# Utilities
+pandas
+plotly
+
+# Testing
+pytest
+httpx
+
+# Optional (for production)
+uvicorn
+fastapi
