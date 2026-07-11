@@ -19,9 +19,9 @@ class TripItinerary(BaseModel):
     status: str = "planned"
 
 class TripState(TypedDict):
-    """Main state for the entire graph"""
+    """Main state for the LangGraph"""
     messages: Annotated[list, add]                    # Chat history
-    preferences: Optional[TripPreferences]           # User input
-    itinerary: Optional[TripItinerary]               # Generated plan
-    next: str                                        # Routing decision
-    dna_profile: dict                                # Traveller DNA
+    preferences: Optional[TripPreferences]
+    itinerary: Optional[TripItinerary]
+    dna_profile: dict = {}
+    next: str                                         # Routing decision
