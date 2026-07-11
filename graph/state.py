@@ -1,11 +1,27 @@
-from typing import TypedDict, Annotated, List
+from typing import TypedDict, Annotated, List, Optional
 from operator import add
-from schemas.trip import TripPreferences, TripItinerary, MonitoringUpdate
+from datetime import datetime
+from pydantic import BaseModel
+
+class TripPreferences(BaseModel):
+    destination: str
+    start_date: datetime
+    end_date: datetime
+    budget: float
+    travelers: int = 1
+    interests: List[str] = []
+
+class TripItinerary(BaseModel):
+    trip_id: str
+    destination: str
+    days: List[dict]
+    total_cost: float
+    status: str = "planned"
 
 class TripState(TypedDict):
-    messages: Annotated[list, add]          # Chat history
-    preferences: TripPreferences | None
-    itinerary: TripItinerary | None
-    monitoring: MonitoringUpdate | None
-    dna_update: dict | None                 # Traveller DNA signals
-    next: str                               # Routing decision
+    """Main state for the entire graph"""
+    messages: Annotated[list, add]                    # Chat history
+    preferences: Optional[TripPreferences]           # User input
+    itinerary: Optional[TripItinerary]               # Generated plan
+    next: str                                        # Routing decision
+    dna_profile: dict                                # Traveller DNA
