@@ -19,7 +19,7 @@ class TripItinerary(BaseModel):
     status: str = "planned"
 
 class TripState(TypedDict):
-    """Main state for the LangGraph"""
+    """Main state for the entire LangGraph"""
     messages: Annotated[list, add]                    # Chat history
     preferences: Optional[TripPreferences]
     itinerary: Optional[TripItinerary]
