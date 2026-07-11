@@ -32,4 +32,6 @@ def _dna_logic(state):
     }
 
 def dna_learner_node(state):
-    return safe_execute(_dna_logic, state, "DNA Learner")
+    def wrapped():
+        return _dna_logic(state)
+    return safe_execute(circuit_breaker.call(wrapped), state, "DNA Learner")
